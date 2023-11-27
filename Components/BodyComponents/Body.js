@@ -1,11 +1,32 @@
 import Card from "./Card"
 import "./Body.css";
 import resList from "../../utils/mockData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {GET_RES_URL} from "../../utils/constant"
 
 export default Body = () => {
 
     const [listOfRestaurant , setListOfRestaurant] = useState(resList);
+
+    useEffect( ()  =>{
+        const fetchData = async() => {
+            try{
+                const getDataProm = await fetch(GET_RES_URL);
+                const data = await getDataProm.json();
+                console.log(data);
+                console.log(data.data.cards[2].card.card.gridElements.infoWithStyle.restaurants);
+                
+                setListOfRestaurant(data.data.cards[2].card.card.gridElements.infoWithStyle.restaurants);
+            }
+            catch(err){
+                console.log(err);
+            }
+        }
+           
+         fetchData();   
+        
+        },[listOfRestaurant]);
+
 
     return (
         <>
@@ -17,7 +38,7 @@ export default Body = () => {
                     onClick={()=> {
                         const filtered = listOfRestaurant.filter
                         (
-                            (res) => res.avgRating > 4
+                            (res) => res.info.avgRating > 4
                         );
                         setListOfRestaurant(filtered);
                     }}
@@ -29,8 +50,10 @@ export default Body = () => {
             <div className="food-container">
                 {
                     listOfRestaurant.map( (restaurant) => (
-                        <Card imgId={restaurant.cloudinaryImageId} name={restaurant.name}  rating={restaurant.rating} cuisines={restaurant.cuisines}  edt={restaurant.edt}  locality={restaurant.locality}/>
+                        
+                        <Card key={restaurant.info.id} imgId={restaurant.info.cloudinaryImageId} name={restaurant.info.name}  rating={restaurant.info.rating} cuisines={restaurant.info.cuisines}  edt={restaurant.info.edt}  locality={restaurant.info.locality}/>
                     ))
+                    
                 }
             </div>
         </>

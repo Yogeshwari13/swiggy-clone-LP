@@ -3,10 +3,13 @@ import "./Body.css";
 import resList from "../../utils/mockData";
 import { useEffect, useState } from "react";
 import {GET_RES_URL} from "../../utils/constant"
+import Shimmer from "./Shimmer";
 
 export default Body = () => {
 
-    const [listOfRestaurant , setListOfRestaurant] = useState(resList);
+    const [listOfRestaurant , setListOfRestaurant] = useState([]);
+    const [filteredRestaurant , setfilteredRestaurant] = useState([]);
+    const [searchText , setsearchText] = useState("");
 
     useEffect( ()  =>{
         const fetchData = async() => {
@@ -14,9 +17,10 @@ export default Body = () => {
                 const getDataProm = await fetch(GET_RES_URL);
                 const data = await getDataProm.json();
                 console.log(data);
-                console.log(data.data.cards[2].card.card.gridElements.infoWithStyle.restaurants);
+                console.log(data.data.cards[1].card.card.gridElements.infoWithStyle.restaurants);
                 
-                setListOfRestaurant(data.data.cards[2].card.card.gridElements.infoWithStyle.restaurants);
+                setListOfRestaurant(data.data.cards[1].card.card.gridElements.infoWithStyle.restaurants);
+                setfilteredRestaurant(data.data.cards[1].card.card.gridElements.infoWithStyle.restaurants);
             }
             catch(err){
                 console.log(err);
@@ -25,22 +29,39 @@ export default Body = () => {
            
          fetchData();   
         
-        },[listOfRestaurant]);
+        },[]);
 
-
+        //Conditional rendering
+    if(listOfRestaurant.length===0){
+        return <Shimmer/>
+    }
     return (
         <>
+        <h2>Restaurants with online food delivery</h2>
             <div 
                 className="search">
-                <input placeholder="search here..."></input>
+                <input placeholder="search here..." value={searchText} 
+                onChange={(e)=>{
+                    setsearchText(e.target.value);
+                }}>
+
+                </input>
+                <button className="filter-btn" onClick={()=>{
+                  
+                    const filteredNames = listOfRestaurant.filter((res)=> res.info.name.toLowerCase().includes(searchText.toLowerCase()));
+                    setfilteredRestaurant(filteredNames);
+                }}>Search by Name</button>
                 <button 
                     className="filter-btn" 
                     onClick={()=> {
                         const filtered = listOfRestaurant.filter
                         (
-                            (res) => res.info.avgRating > 4
+                            (res) => {
+                                const rating = searchText;
+                                return res.info.avgRating > rating
+                            }
                         );
-                        setListOfRestaurant(filtered);
+                        setfilteredRestaurant(filtered);
                     }}
                 >
                     Get Top Rated Restaurant
@@ -49,9 +70,9 @@ export default Body = () => {
 
             <div className="food-container">
                 {
-                    listOfRestaurant.map( (restaurant) => (
+                    filteredRestaurant.map( (restaurant) => (
                         
-                        <Card key={restaurant.info.id} imgId={restaurant.info.cloudinaryImageId} name={restaurant.info.name}  rating={restaurant.info.rating} cuisines={restaurant.info.cuisines}  edt={restaurant.info.edt}  locality={restaurant.info.locality}/>
+                        <Card key={restaurant.info.id} imgId={restaurant.info.cloudinaryImageId} name={restaurant.info.name}  rating={restaurant.info.avgRating} cuisines={restaurant.info.cuisines}  locality={restaurant.info.locality}/>
                     ))
                     
                 }

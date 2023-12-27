@@ -3,6 +3,8 @@ import React from "react";
 import Head from "./Components/HeaderComponents/Header.js";
 import Foot from "./Components/FooterComponents/Footer.js";
 import Body from "./Components/BodyComponents/Body.js";
+import TopResContainer from "./Components/BodyComponents/TopResChainComponents/TopResContainer.js";
+import Counter from "./utils/Counter.js";
 
 
 const Main = ()=> {
@@ -10,6 +12,7 @@ const Main = ()=> {
         <>
             <div>
                 <Head/>
+                <TopResContainer/>
                 <Body/>
                 <Foot/>
             </div>

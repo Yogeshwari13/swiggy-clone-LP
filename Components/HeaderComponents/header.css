@@ -1,6 +1,8 @@
 .header {
     display: flex;
     justify-content: space-between;
+    /* border: 1px solid black; */
+    background-color: #f0f0f0;
 }
 
 .nav-items > ul {
@@ -8,13 +10,21 @@
 }
 
 .nav-items > ul > li {
+    cursor: pointer;
     display: flex;
-    padding: 10px;
+    padding: 30px;
     font-size: 20px;
 }
+.nav-items > ul > li:hover {
+    font-size: 22px;
+    transition: 0.4s ease;
+    color: orange;
+}
+
 
 .logo > img{
     height: 100px;
-    width: 150px;
+    width: 120px;
+    border-radius: 50%;
 }
 
